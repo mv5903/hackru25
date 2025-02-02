@@ -8,6 +8,7 @@ export async function getAuth0() {
     auth0Client = await createAuth0Client({
       domain: "dev-wwl580pzupbxnr5y.us.auth0.com",
       clientId: "mDznmTnsp2eZ1BglZADay52wNVCITXA9",
+      cacheLocation: "localstorage",
       authorizationParams: {
         redirect_uri: "https://plate-pioneer.us/",
       }
