@@ -10,6 +10,7 @@
     } from '../assets/IntakeFormType';
 
 	import { clientAPIInstance } from '$lib/stores/clientAPIStore';
+	import { intakeFormCompleted, recheckIntakeForm } from '$lib/stores/intakeFormStatusStore';
 	import { onMount } from 'svelte';
 	import IntakeDropdown from './IntakeDropdown.svelte';
 	import IntakeMultiString from './IntakeMultiString.svelte';
@@ -26,8 +27,6 @@
     let budget: string = "";
     let alcoholAllowed: string[] = [];
     let timeToCook: string[] = [];
-
-    export let recheckIntakeFormStatus: () => Promise<void>;
 
     function numbersRemoved(list: string[]) {
         return list.filter((item) => !/^\d+$/.test(item));
@@ -55,8 +54,8 @@
 
         if ($clientAPIInstance) {
             await $clientAPIInstance.updateIntakeForm(data);
-            alert("Intake form submitted updated successfully"); 
-            recheckIntakeFormStatus();
+            alert("Intake form submitted updated successfully");
+            intakeFormCompleted.set($recheckIntakeForm());
         }
     }
 

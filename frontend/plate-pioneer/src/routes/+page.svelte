@@ -8,6 +8,7 @@
 	import { PlatePioneerAPI } from '$lib/client/PlatePioneerAPI';
 	import { auth0, isAuthenticated, user } from '$lib/stores/authStore';
 	import { clientAPIInstance } from '$lib/stores/clientAPIStore';
+	import { intakeFormCompleted, recheckIntakeForm } from '$lib/stores/intakeFormStatusStore';
 	import Loading from '../components/Loading.svelte';
 	import Achievements from './pages/Achievements.svelte';
 	import Added from './pages/Added.svelte';
@@ -33,10 +34,11 @@
 		currentNavItem = item;
 	}
 
-	function recheckIntakeFormStatus() {
+	async function recheckIntakeFormStatus(): Promise<boolean> {
 		if ($clientAPIInstance) {
-			return $clientAPIInstance.getIntakeForm() != null;
+			return await $clientAPIInstance.getIntakeForm() != null;
 		}
+		return false;
 	}
 
 	onMount(async () => {
@@ -65,6 +67,9 @@
 		}
 
 		isLoading = false;
+
+		intakeFormCompleted.set(await recheckIntakeFormStatus());
+		recheckIntakeForm.set(recheckIntakeFormStatus);
 	});
 
 	async function login() {
