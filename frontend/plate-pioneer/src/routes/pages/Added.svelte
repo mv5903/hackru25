@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { clientAPIInstance } from "$lib/stores/clientAPIStore";
 	import { onMount } from "svelte";
-
     interface Recipe {
       name: string;
       description: string;
@@ -12,14 +12,18 @@
     let recipesArray: any[] = [];
 
     onMount(async () => {
-        // if (!$clientAPIInstance) return;
-        // const recipes = await $clientAPIInstance.getMyRecipes();;
-        // recipesArray = Object.keys(recipes).map(key => [key, recipes[key]]);
+        if (!$clientAPIInstance) return;
+        const recipes = await $clientAPIInstance.getMyRecipes();
+        console.log(recipes);
+        recipesArray = Object.keys(recipes).map(key => [key, recipes[key]]);
     })
   </script>
   
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Added Recipes</h1>
+    {#if Array.isArray(recipesArray) && recipesArray.length === 0}
+      <p class="text-gray-500">No recipes added yet, add some through the explore menu!</p>
+    {:else}
     <!-- Loop through each recipe and render it as a collapse item -->
     <div class="space-y-4">
       {#each recipesArray as [key, recipe]}
@@ -30,8 +34,7 @@
           </div>
           <div class="collapse-content">
             <div class="flex flex-col md:flex-row gap-4">
-              <img src={recipe.photoURL} alt={""} class="w-full md:w-48 rounded shadow" />
-              <div>
+              <div class="w-full">
                 <p class="mb-2">{recipe.description}</p>
                 <h3 class="font-bold">Ingredients:</h3>
                 <ul class="list-disc pl-5 mb-4">
@@ -51,5 +54,6 @@
         </div>
       {/each}
     </div>
+    {/if}
   </div>
   

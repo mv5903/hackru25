@@ -5,7 +5,7 @@ const endpoints = {
     intakeFormComplete: "intake-form-complete",
     foodQuestionnaire: "food-questionnaire",
     foodSuggestions: "food-suggestions",
-    addToFoodSelection: "food-selection",
+    foodSelection: "food-selection",
 }
 
 export class PlatePioneerAPI {
@@ -83,7 +83,7 @@ export class PlatePioneerAPI {
      * @returns true if the meal was successfully added to the user's food selection
      */
     async addToFoodSelection(selected_meal: any): Promise<any> {
-        const res = await fetch(BASE_URL + endpoints.addToFoodSelection, {
+        const res = await fetch(BASE_URL + endpoints.foodSelection, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -95,5 +95,10 @@ export class PlatePioneerAPI {
         });
 
         return res.status === 200;
+    }
+
+    async getMyRecipes(): Promise<any> {
+        const res = await fetch(BASE_URL + endpoints.foodSelection + "?authID=" + encodeURIComponent(this.auth0id));
+        return res.json();
     }
 }

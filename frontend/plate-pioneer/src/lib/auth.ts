@@ -9,7 +9,7 @@ export async function getAuth0() {
       domain: "dev-wwl580pzupbxnr5y.us.auth0.com",
       clientId: "mDznmTnsp2eZ1BglZADay52wNVCITXA9",
       authorizationParams: {
-        redirect_uri: "http://localhost:5173/",
+        redirect_uri: "https://plate-pioneer.us/",
       }
     });
   }

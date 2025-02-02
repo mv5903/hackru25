@@ -12,15 +12,15 @@
   // This function loads and appends new recipes
   async function getRecipes() {
     if ($clientAPIInstance) {
-      try {
+      // try {
         const recipes = JSON.parse(await $clientAPIInstance.getRecipeRecommendations());
         // Convert the recipe object to an array of [key, recipe] pairs
         const newRecipes = Object.keys(recipes).map(key => [key, recipes[key]]);
         activeRecipes = [...activeRecipes, ...newRecipes];
-      } catch (e) {
-        // You may want to handle errors more gracefully
-        await getRecipes();
-      }
+      // } catch (e) {
+      //   // You may want to handle errors more gracefully
+      //   await getRecipes();
+      // }
     }
     loadingMore = false;
   }
