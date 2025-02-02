@@ -3,7 +3,7 @@ const BASE_URL = "https://zsdrecfkre.execute-api.us-east-1.amazonaws.com/prod/";
 const endpoints = {
     signup: "signup",
     intakeFormComplete: "intake-form-complete",
-    updateIntakeForm: "update-intake-form",
+    updateIntakeForm: "food-questionnaire",
 }
 
 export class PlatePioneerAPI {
@@ -49,14 +49,14 @@ export class PlatePioneerAPI {
      * @returns true if the intake form was successfully updated
      */
     async updateIntakeForm(formData: any): Promise<boolean> {
-        const res = await fetch(BASE_URL + endpoints.intakeFormComplete, {
+        const res = await fetch(BASE_URL + endpoints.updateIntakeForm, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 "authID": this.auth0id,
-                ...formData,
+                "intake_form": formData,
             }),
         });
 

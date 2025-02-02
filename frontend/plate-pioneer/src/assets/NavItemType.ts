@@ -7,7 +7,7 @@ export default interface NavItemType {
 export const navItems: NavItemType[] = [
     { id: "home", icon: "home", label: "Home" },
     { id: "explore", icon: "star", label: "Explore" },
-    { id: "add", icon: "plus", label: "Add" },
+    { id: "add", icon: "check", label: "Added" },
     { id: "achievements", icon: "trophy", label: "Achievements" },
     { id: "profile", icon: "account", label: "Profile" }
 ];

@@ -139,69 +139,38 @@
     const recipesArray = Object.entries(currentRecipes);
   </script>
   
-  <!-- Carousel Container -->
-  <div class="carousel w-full h-[75vh]">
-    {#each recipesArray as [key, recipe], index}
-      <!-- Each slide has a unique id (e.g., slide1, slide2, ...) -->
-      <div id={"slide" + (index + 1)} class="carousel-item relative w-full">
-        <div class="card bg-base-100 shadow-xl mx-auto h-full w-3/4">
-          <figure>
-            <img src={recipe.photoURL} alt={recipe.name} class="object-cover h-48 w-full" />
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title text-2xl font-bold text-left">{recipe.name}</h2>
-            <p class="text-gray-500 text-left">{recipe.description}</p>
-  
-            <!-- Ingredients (using a DaisyUI collapse component) -->
-            <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
-              <input type="checkbox" />
-              <div class="collapse-title text-xl font-medium text-left">Ingredients</div>
-              <div class="collapse-content">
-                <ul class="list-disc list-inside">
-                  {#each recipe.ingredients as item}
-                    <li class="text-left">{item.amount} of {item.ingredient}</li>
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Added Recipes</h1>
+    <!-- Loop through each recipe and render it as a collapse item -->
+    <div class="space-y-4">
+      {#each recipesArray as [key, recipe]}
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+          <div class="collapse-title text-xl font-medium">
+            {recipe.name}
+          </div>
+          <div class="collapse-content">
+            <div class="flex flex-col md:flex-row gap-4">
+              <img src={recipe.photoURL} alt={""} class="w-full md:w-48 rounded shadow" />
+              <div>
+                <p class="mb-2">{recipe.description}</p>
+                <h3 class="font-bold">Ingredients:</h3>
+                <ul class="list-disc pl-5 mb-4">
+                  {#each recipe.ingredients as ingredient}
+                    <li class="text-left">{ingredient.amount} {ingredient.ingredient}</li>
                   {/each}
                 </ul>
-              </div>
-            </div>
-  
-            <!-- Instructions (using another DaisyUI collapse component) -->
-            <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
-              <input type="checkbox" />
-              <div class="collapse-title text-xl font-medium text-left">Instructions</div>
-              <div class="collapse-content">
-                <ol class="list-decimal list-inside">
-                  {#each recipe.instructions as step}
-                    <li class="mb-1 text-left">{step}</li>
+                <h3 class="font-bold">Instructions:</h3>
+                <ol class="list-decimal pl-5">
+                  {#each recipe.instructions as instruction}
+                    <li class="mb-1 text-left">{instruction}</li>
                   {/each}
                 </ol>
               </div>
             </div>
-  
-            <div class="card-actions justify-end">
-              <button class="btn btn-primary">Add Recipe</button>
-            </div>
           </div>
         </div>
-  
-        <!-- Navigation Buttons -->
-        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-          <!-- Previous Button -->
-          <a
-            href={"#slide" + (index === 0 ? recipesArray.length : index)}
-            class="btn btn-circle"
-          >
-            ❮
-          </a>
-          <!-- Next Button -->
-          <a
-            href={"#slide" + (index + 2 > recipesArray.length ? 1 : index + 2)}
-            class="btn btn-circle"
-          >
-            ❯
-          </a>
-        </div>
-      </div>
-    {/each}
+      {/each}
+    </div>
   </div>
   

@@ -4,11 +4,8 @@
     	CuisineType,
     	DietaryPreferenceType,
     	IntakeFormQuestions,
-
     	MealType,
-
     	MeatStatus,
-
     	TimeCookType
     } from '../assets/IntakeFormType';
 

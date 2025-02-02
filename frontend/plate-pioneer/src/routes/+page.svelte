@@ -8,17 +8,20 @@
 	import { PlatePioneerAPI } from '$lib/client/PlatePioneerAPI';
 	import { auth0, isAuthenticated, user } from '$lib/stores/authStore';
 	import { clientAPIInstance } from '$lib/stores/clientAPIStore';
+	import Loading from '../components/Loading.svelte';
 	import Achievements from './pages/Achievements.svelte';
-	import Add from './pages/Add.svelte';
+	import Added from './pages/Added.svelte';
 	import Explore from './pages/Explore.svelte';
 	import Home from './pages/Home.svelte';
 	import Profile from './pages/Profile.svelte';
+
+	let isLoading = true;
 
 	// Map each nav id to its component
 	const pages: Record<string, typeof Home> = {
 		home: Home,
 		explore: Explore,
-		add: Add,
+		add: Added,
 		achievements: Achievements,
 		profile: Profile
 	};
@@ -53,6 +56,8 @@
 		} else {
 			
 		}
+
+		isLoading = false;
 	});
 
 	async function login() {
@@ -67,27 +72,48 @@
 </script>
 
 <div class={`flex md:w-3/4 w-full justify-center place-items-center mx-auto ${!$isAuthenticated && 'h-[100vh]'}`}>
-	{#if !$isAuthenticated}
-		<div
-			class="container flex h-full w-full flex-col place-items-center justify-center gap-12 text-center"
-		>
-			<h1 class="text-3xl">Plate Pioneer</h1>
-			<p>
-				Log what you cook at home, and use AI to come up with new dishes to cook based on your
-				eating preferences!
-			</p>
-			<button class="btn btn-primary w-1/2" on:click={() => login()}>Get Started</button>
+	<div class="fixed top-4 left-4">
+		<div class="avatar w-12">
+			<div class="w-24 rounded-xl">
+			  <!-- svelte-ignore a11y_missing_attribute -->
+			  <img src="src/public/logo.png"  />
+			</div>
 		</div>
+	</div>
+	<div class="fixed top-4 right-4">
+		<div class="avatar">
+			<div class="rounded-xl">
+				{#if !isLoading && $isAuthenticated}
+			  		<button class="btn btn-error" on:click={() => logout()}>Log out</button>
+				{/if}
+			</div>
+		</div>
+	</div>
+	{#if isLoading}
+		<Loading />
 	{:else}
-		<div class="m-3 mb-20 w-full text-center">
-			<h1 class="text-3xl">Plate Pioneer</h1>
-			<h2 class="text-4xl font-bold">{currentNavItem.label}</h2>
-			<svelte:component this={pages[currentNavItem.id]} />
-		</div>
-		<div class="btm-nav fixed bottom-0 w-full">
-			{#each navItems as navItem}
-				<NavItem tab={navItem} isActive={navItem === currentNavItem} {updateNavItem} />
-			{/each}
-		</div>
+		{#if !$isAuthenticated}
+			<div
+				class="container flex h-full w-full flex-col place-items-center justify-center gap-12 text-center"
+			>
+				<h1 class="text-3xl">Plate Pioneer</h1>
+				<p>
+					Log what you cook at home, and use AI to come up with new dishes to cook based on your
+					eating preferences!
+				</p>
+				<button class="btn btn-primary w-1/2" on:click={() => login()}>Get Started</button>
+			</div>
+		{:else}
+			<div class="m-3 mb-20 w-full text-center">
+				<h1 class="text-3xl">Plate Pioneer</h1>
+				<h2 class="text-4xl font-bold">{currentNavItem.label}</h2>
+				<svelte:component this={pages[currentNavItem.id]} />
+			</div>
+			<div class="btm-nav fixed bottom-0 w-full">
+				{#each navItems as navItem}
+					<NavItem tab={navItem} isActive={navItem === currentNavItem} {updateNavItem} />
+				{/each}
+			</div>
+		{/if}
 	{/if}
 </div>
