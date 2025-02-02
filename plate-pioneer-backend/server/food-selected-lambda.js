@@ -12,7 +12,9 @@ exports.handler = async (event) => {
   const DB_NAME = "PlatePioneer";
   try {
     const user_id = bodyObject.authID;
+    const selected_meal = bodyObject.selected_meal;
     console.log("User ID", user_id);
+    console.log("Selected Meal", selected_meal);
 
     if (!user_id) {
       throw new Error("No User ID Found!");
@@ -24,13 +26,28 @@ exports.handler = async (event) => {
     const database = client.db(DB_NAME);
     const users = database.collection("Users");
 
-    await users.insertOne({
-      user_auth_id: user_id,
-      intake_form: null,
-      selected_meals: [],
-    });
+    // Check if auth_id exists in the collection
+    const existingUser = await users.findOne({ user_auth_id: user_id });
+    console.log("Existing User:", existingUser);
+    if (!existingUser) {
+      // If user doesn't exist, return a response indicating that the user doesn't exists
+      return {
+        statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+        },
+        body: JSON.stringify({ message: "User doesn't exist" }),
+      };
+    }
 
-    console.log("User Added To DB");
+    //update selected meals list
+    const result = await users.updateOne(
+      { user_auth_id: user_id },
+      { $push: { selected_meals: selected_meal } }
+    );
+
     return {
       statusCode: 200,
       headers: {
@@ -38,21 +55,9 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       },
-      body: JSON.stringify({ message: "User Added To DB" }),
+      body: JSON.stringify(result.selected_meals),
     };
   } catch (error) {
-    console.log(error);
-    if (error.code === 11000) {
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-        },
-        body: JSON.stringify({ message: "Duplicate Key In DB" }),
-      };
-    }
     return {
       statusCode: 400,
       headers: {
@@ -60,9 +65,7 @@ exports.handler = async (event) => {
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       },
-      body: JSON.stringify({ message: error }),
+      body: JSON.stringify({ message: `Error: ${error}` }),
     };
-  } finally {
-    await client.close();
   }
 };

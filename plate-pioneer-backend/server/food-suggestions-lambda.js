@@ -9,16 +9,12 @@ exports.handler = async (event) => {
   const username = encodeURIComponent("JeetG-22");
   const password = encodeURIComponent("Jeet12345!");
   const mongodb_uri = `mongodb+srv://${username}:${password}@platepioneer.ilmm5.mongodb.net/?retryWrites=true&w=majority&appName=PlatePioneer`;
-  const bodyObject = JSON.parse(event.body || "{}");
-  console.log("Parsed body:", bodyObject);
 
   const client = new MongoClient(mongodb_uri);
   const DB_NAME = "PlatePioneer";
   try {
-    const user_id = bodyObject.authID;
-    const intake_form = bodyObject.intake_form;
+    const user_id = event.queryStringParameters.authID;
     console.log("User ID", user_id);
-    console.log("Intake Form", intake_form);
 
     if (!user_id) {
       throw new Error("No User ID Found!");
@@ -34,9 +30,9 @@ exports.handler = async (event) => {
     const existingUser = await users.findOne({ user_auth_id: user_id });
     console.log("Existing User:", existingUser);
     if (!existingUser) {
-      // If user exists, return a response indicating that the user already exists
+      // If user doesn't exist, return a response indicating that the user doesn't exists
       return {
-        statusCode: 200,
+        statusCode: 400,
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type",
@@ -45,61 +41,56 @@ exports.handler = async (event) => {
         body: JSON.stringify({ message: "User doesn't exist" }),
       };
     }
-    console.log(existingUser);
+    const intake_data = existingUser.intake_form;
 
+    //execute prompt for meal suggestions
     const openai = new OpenAI({
       apiKey: OPENAI_API_KEY,
     });
 
-    async function getMealSuggestions(userInput) {
-      const prompt = `
-      Based on the following user preferences, generate 3 possible meal ideas that meet their requirements. Each meal should have a name, instructions, key ingredients, and a simple picture. Ensure the meals follow these constraints:
-${JSON.stringify(userInput, null, 2)}
-Return the output in the following key-value format (json), with these keys:
-meal #{
-"name": string, "description": string, "ingredients": object[{"ingredient": string, "amount": string}], "instructions": string[], "photoURL": string 
-}
-
-an example would look like:
-{ "meal_1": { "title": "Meal 1 Title", "description": "Meal 1 description", "ingredients": [ {"ingredient": "ingredient_name", "amount": "amount"} ], "instructions": [ "Step 1: instruction", "Step 2: instruction" ], "image_url": "image_url" }
-`;
-
-      try {
-        const response = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 1500,
-        });
-        return response.choices[0].message.content;
-      } catch (error) {
-        console.error("Error Generating Meals:", error);
-      }
-    }
-
     const userInput = {
-      allergies: ["Peanuts", "Shellfish"],
-      dietary_type: "Pescatarian",
-      dietary_restrictions: ["Gluten-Free"],
-      foods_to_avoid: ["Mushrooms"],
-      cuisine_preferences: ["Italian", "Thai", "Mediterranean"],
-      spice_tolerance_out_of_5: 3,
-      meal_type: "More protein, balanced fats",
-      budget_per_meal: "No preference",
-      alcohol_consumption: true,
-      time_available: "High effort",
+      allergies: intake_data.allergies,
+      meat_status: intake_data.meatStatus,
+      dietary_preferences: intake_data.dietaryPreferences,
+      foods_to_avoid: intake_data.avoidFoods,
+      cuisine_preferences: intake_data.cuisinePreferences,
+      spice_tolerance_out_of_5: intake_data.spiceTolerance,
+      meal_type: intake_data.mealTypes,
+      budget_per_meal: intake_data.budget,
+      alcohol_consumption: intake_data.alcoholAllowed,
+      time_available: intake_data.timeToCook,
     };
 
-    response = await getMealSuggestions(userInput);
-    console.log(response);
+    const prompt = `
+      Based on the following user preferences, generate 3 possible meal ideas that meet their requirements. 
+      Each meal should have a name, instructions, key ingredients, and a simple picture. Ensure the meals follow these constraints:
+      ${JSON.stringify(userInput, null, 2)}
+      Return the output in the following key-value format (json), with these keys:
 
+      meal #{
+      "name": string, "description": string, "ingredients": object[{"ingredient": string, "amount": string}], "instructions": string[], "photoURL": string 
+      }
+
+      an example would look like:
+      { "meal_1": { "title": "Meal 1 Title", "description": "Meal 1 description", "ingredients": [ {"ingredient": "ingredient_name", "amount": "amount"} ],
+       "instructions": [ "Step 1: instruction", "Step 2: instruction" ], "image_url": "image_url" }`;
+
+    console.log("Prompt:", prompt);
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 1500,
+    });
+    console.log("Response:", response);
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Allow all origins
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       },
-      body: JSON.stringify({ message: "User Added To DB" }),
+      body: JSON.stringify(response.choices[0].message.content),
     };
   } catch (error) {
     console.log(error);
@@ -110,7 +101,7 @@ an example would look like:
         "Access-Control-Allow-Headers": "Content-Type",
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       },
-      body: JSON.stringify({ message: error }),
+      body: JSON.stringify({ message: "Error Generating Meals:", error }),
     };
   }
 };
