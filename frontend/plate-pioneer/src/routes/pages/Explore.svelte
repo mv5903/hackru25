@@ -2,6 +2,6 @@
 
 </script>
 
-<div class="container">
+<div class="">
     <p>Explore Test</p>
 </div>

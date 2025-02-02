@@ -4,7 +4,7 @@ export type IntakeFormType = {
     dietaryPreferences: [DietaryPreferenceType];
     avoidFoods: [string];
     cuisinePreferences: [CuisineType];
-    spiceTolerance: 1 | 2 | 3 | 4 | 5;
+    spiceTolerance: 0 | 1 | 2 | 3 | 4 | 5;
     mealTypes: [MealType];
     budget: "$" | "$$" | "$$$" | "$$$$";
     alcoholAllowed: boolean;
@@ -67,6 +67,14 @@ export enum TimeCookType {
     MULTI_DAY,
     NO_PREFERENCE
 }
+
+export const IntakeFormEnumMapping: { [key: string]: any } = {
+    meatStatus: MeatStatus,
+    dietaryPreferences: DietaryPreferenceType,
+    cuisinePreferences: CuisineType,
+    mealTypes: MealType,
+    timeToCook: TimeCookType,
+};
 
 export const IntakeFormPreviewType = {
     allergies: [""],

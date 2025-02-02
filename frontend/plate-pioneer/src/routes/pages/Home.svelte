@@ -17,7 +17,7 @@
     {#if !intakeFormComplete}
         <IntakeForm />
     {:else}
-        <p class="mt-4">You can now start adding your recipes!</p>
+        <p class="mt-4">You can now start adding your recipes! Head over to the explore tab to get started.</p>
     {/if}
     <p></p>
 </div>

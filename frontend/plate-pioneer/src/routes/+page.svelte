@@ -66,7 +66,7 @@
 	}
 </script>
 
-<div class={`flex w-full justify-center ${!$isAuthenticated && 'h-[100vh]'}`}>
+<div class={`flex md:w-3/4 w-full justify-center place-items-center mx-auto ${!$isAuthenticated && 'h-[100vh]'}`}>
 	{#if !$isAuthenticated}
 		<div
 			class="container flex h-full w-full flex-col place-items-center justify-center gap-12 text-center"
@@ -79,7 +79,7 @@
 			<button class="btn btn-primary w-1/2" on:click={() => login()}>Get Started</button>
 		</div>
 	{:else}
-		<div class="m-3 w-full text-center">
+		<div class="m-3 mb-20 w-full text-center">
 			<h1 class="text-3xl">Plate Pioneer</h1>
 			<h2 class="text-4xl font-bold">{currentNavItem.label}</h2>
 			<svelte:component this={pages[currentNavItem.id]} />

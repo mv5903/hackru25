@@ -1,5 +1,3 @@
-import type { IntakeFormType } from "../../assets/IntakeFormType";
-
 const BASE_URL = "https://zsdrecfkre.execute-api.us-east-1.amazonaws.com/prod/";
 
 const endpoints = {
@@ -50,7 +48,7 @@ export class PlatePioneerAPI {
      * @param formData Data from the intake form
      * @returns true if the intake form was successfully updated
      */
-    async updateIntakeForm(formData: IntakeFormType): Promise<boolean> {
+    async updateIntakeForm(formData: any): Promise<boolean> {
         const res = await fetch(BASE_URL + endpoints.intakeFormComplete, {
             method: "POST",
             headers: {

@@ -16,7 +16,7 @@
     });
 </script>
 
-<div class="container">
+<div class="">
     <div class="mt-4">
         {#if user && user.given_name}
             <p class="text-lg">Hello {user.given_name}!</p>
