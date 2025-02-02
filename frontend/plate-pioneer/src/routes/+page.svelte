@@ -16,6 +16,7 @@
 	import Profile from './pages/Profile.svelte';
 
 	let isLoading = true;
+	let intakeFormComplete = false;
 
 	// Map each nav id to its component
 	const pages: Record<string, typeof Home> = {
@@ -30,6 +31,12 @@
 
 	function updateNavItem(item: NavItemType) {
 		currentNavItem = item;
+	}
+
+	function recheckIntakeFormStatus() {
+		if ($clientAPIInstance) {
+			return $clientAPIInstance.getIntakeForm() != null;
+		}
 	}
 
 	onMount(async () => {
@@ -107,7 +114,7 @@
 			<div class="m-3 mb-20 w-full text-center">
 				<h1 class="text-3xl">Plate Pioneer</h1>
 				<h2 class="text-4xl font-bold">{currentNavItem.label}</h2>
-				<svelte:component this={pages[currentNavItem.id]} />
+				<svelte:component this={pages[currentNavItem.id]}  />
 			</div>
 			<div class="btm-nav fixed bottom-0 w-full">
 				{#each navItems as navItem}

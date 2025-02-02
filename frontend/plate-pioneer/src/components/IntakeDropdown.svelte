@@ -1,5 +1,6 @@
 <script lang="ts">
 	
+	
     export let isMulti: boolean;
     export let responses: string[] = [];
     export let choices: string[] = [];
@@ -37,14 +38,14 @@
   
     <!-- Use a placeholder option so that the user is prompted to select -->
     <select on:change={handleChange} class="select select-bordered w-full max-w-xs">
-      <option value="" disabled selected>Select an option</option>
+      <option value="" disabled>Select an option</option>
       {#each choices as choice}
         <option value={choice}>{choice}</option>
       {/each}
     </select>
   
     {#if isMulti && responses.length > 0}
-      <div class="mt-4 flex flex-wrap gap-2">
+      <div class="mt-4 flex flex-wrap justify-center place-items-center gap-2">
         {#each responses as response (response)}
           <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center">
             <span>{response}</span>

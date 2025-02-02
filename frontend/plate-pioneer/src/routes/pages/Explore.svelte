@@ -1,207 +1,132 @@
 <script lang="ts">
-    interface Recipe {
-      name: string;
-      description: string;
-      ingredients: { ingredient: string; amount: string }[];
-      instructions: string[];
-      photoURL: string;
-    }
-  
-    let currentRecipes: { [key: string]: Recipe } = {
-      meal_1: {
-        name: "Lemon Garlic Butter Shrimp with Zucchini Noodles",
-        description:
-          "A light and flavorful Mediterranean-inspired dish featuring succulent shrimp, zucchini noodles, and a rich lemon garlic butter sauce.",
-        ingredients: [
-          { ingredient: "shrimp", amount: "1 lb" },
-          { ingredient: "zucchini", amount: "3 medium" },
-          { ingredient: "butter", amount: "3 tbsp" },
-          { ingredient: "garlic", amount: "4 cloves, minced" },
-          { ingredient: "lemon juice", amount: "2 tbsp" },
-          { ingredient: "olive oil", amount: "1 tbsp" },
-          { ingredient: "parsley", amount: "2 tbsp, chopped" },
-          { ingredient: "salt", amount: "to taste" },
-          { ingredient: "black pepper", amount: "to taste" },
-          { ingredient: "red pepper flakes", amount: "1/4 tsp" }
-        ],
-        instructions: [
-          "Spiralize the zucchini into noodles and set aside.",
-          "Heat olive oil in a large skillet over medium heat. Add shrimp, salt, and pepper, and cook until pink (about 2-3 minutes per side). Remove shrimp and set aside.",
-          "In the same skillet, melt butter and add minced garlic. Sauté for 1-2 minutes until fragrant.",
-          "Add lemon juice, red pepper flakes, and zucchini noodles. Toss to coat and cook for 2-3 minutes until noodles are tender.",
-          "Return shrimp to the skillet, toss everything together, and garnish with parsley. Serve immediately."
-        ],
-        photoURL: "https://example.com/lemon-garlic-butter-shrimp.jpg"
-      },
-      meal_2: {
-        name: "Thai Green Curry with Tofu and Vegetables",
-        description:
-          "A fragrant and mildly spicy Thai green curry made with tofu, bell peppers, and green beans, served over jasmine rice.",
-        ingredients: [
-          { ingredient: "firm tofu", amount: "14 oz, cubed" },
-          { ingredient: "green curry paste", amount: "2 tbsp" },
-          { ingredient: "coconut milk", amount: "1 can (13.5 oz)" },
-          { ingredient: "bell peppers", amount: "2, sliced" },
-          { ingredient: "green beans", amount: "1 cup" },
-          { ingredient: "basil leaves", amount: "1/4 cup" },
-          { ingredient: "fish sauce", amount: "1 tbsp" },
-          { ingredient: "brown sugar", amount: "1 tsp" },
-          { ingredient: "jasmine rice", amount: "1 cup, cooked" },
-          { ingredient: "vegetable oil", amount: "1 tbsp" }
-        ],
-        instructions: [
-          "Heat vegetable oil in a large pan over medium heat. Add tofu and cook until golden brown on all sides. Remove and set aside.",
-          "In the same pan, add green curry paste and sauté for 1-2 minutes until fragrant.",
-          "Pour in coconut milk, fish sauce, and brown sugar. Stir to combine.",
-          "Add bell peppers and green beans. Simmer for 5-7 minutes until vegetables are tender.",
-          "Return tofu to the pan and stir in basil leaves. Serve hot over jasmine rice."
-        ],
-        photoURL: "https://example.com/thai-green-curry-tofu.jpg"
-      },
-      meal_3: {
-        name: "Grilled Salmon with Quinoa and Avocado Salsa",
-        description:
-          "A protein-packed meal featuring grilled salmon, fluffy quinoa, and a refreshing avocado salsa.",
-        ingredients: [
-          { ingredient: "salmon fillets", amount: "2 (6 oz each)" },
-          { ingredient: "quinoa", amount: "1 cup, cooked" },
-          { ingredient: "avocado", amount: "1, diced" },
-          { ingredient: "cherry tomatoes", amount: "1/2 cup, halved" },
-          { ingredient: "red onion", amount: "1/4 cup, finely chopped" },
-          { ingredient: "cilantro", amount: "2 tbsp, chopped" },
-          { ingredient: "lime juice", amount: "2 tbsp" },
-          { ingredient: "olive oil", amount: "1 tbsp" },
-          { ingredient: "salt", amount: "to taste" },
-          { ingredient: "black pepper", amount: "to taste" }
-        ],
-        instructions: [
-          "Preheat grill to medium-high heat. Season salmon fillets with salt, pepper, and a drizzle of olive oil.",
-          "Grill salmon for 4-5 minutes per side until cooked through.",
-          "In a bowl, combine avocado, cherry tomatoes, red onion, cilantro, and lime juice to make the salsa.",
-          "Serve grilled salmon over cooked quinoa and top with avocado salsa."
-        ],
-        photoURL: "https://example.com/grilled-salmon-quinoa.jpg"
-      },
-      meal_4: {
-        name: "Mediterranean Tuna Salad Bowl",
-        description:
-          "A hearty and healthy bowl featuring tuna, chickpeas, cucumbers, and a tangy lemon-dill dressing.",
-        ingredients: [
-          { ingredient: "canned tuna", amount: "2 cans (5 oz each)" },
-          { ingredient: "chickpeas", amount: "1 cup, cooked" },
-          { ingredient: "cucumber", amount: "1, diced" },
-          { ingredient: "cherry tomatoes", amount: "1/2 cup, halved" },
-          { ingredient: "red onion", amount: "1/4 cup, finely chopped" },
-          { ingredient: "kalamata olives", amount: "1/4 cup, sliced" },
-          { ingredient: "feta cheese", amount: "1/4 cup, crumbled" },
-          { ingredient: "olive oil", amount: "2 tbsp" },
-          { ingredient: "lemon juice", amount: "1 tbsp" },
-          { ingredient: "dill", amount: "1 tbsp, chopped" },
-          { ingredient: "salt", amount: "to taste" },
-          { ingredient: "black pepper", amount: "to taste" }
-        ],
-        instructions: [
-          "In a large bowl, combine tuna, chickpeas, cucumber, cherry tomatoes, red onion, and olives.",
-          "In a small bowl, whisk together olive oil, lemon juice, dill, salt, and pepper to make the dressing.",
-          "Pour the dressing over the salad and toss to combine.",
-          "Top with crumbled feta cheese and serve immediately."
-        ],
-        photoURL: "https://example.com/mediterranean-tuna-salad.jpg"
-      },
-      meal_5: {
-        name: "Spicy Garlic Prawn Pasta (Gluten-Free)",
-        description:
-          "A quick and flavorful Italian-inspired dish featuring gluten-free pasta, prawns, and a spicy garlic tomato sauce.",
-        ingredients: [
-          { ingredient: "gluten-free pasta", amount: "8 oz" },
-          { ingredient: "prawns", amount: "1 lb, peeled and deveined" },
-          { ingredient: "garlic", amount: "4 cloves, minced" },
-          { ingredient: "cherry tomatoes", amount: "1 cup, halved" },
-          { ingredient: "red chili flakes", amount: "1/2 tsp" },
-          { ingredient: "white wine", amount: "1/4 cup" },
-          { ingredient: "olive oil", amount: "2 tbsp" },
-          { ingredient: "parsley", amount: "2 tbsp, chopped" },
-          { ingredient: "salt", amount: "to taste" },
-          { ingredient: "black pepper", amount: "to taste" }
-        ],
-        instructions: [
-          "Cook gluten-free pasta according to package instructions. Drain and set aside.",
-          "Heat olive oil in a large skillet over medium heat. Add garlic and red chili flakes, and sauté for 1-2 minutes until fragrant.",
-          "Add prawns and cook until pink (about 2-3 minutes per side). Remove prawns and set aside.",
-          "In the same skillet, add cherry tomatoes and white wine. Simmer for 5 minutes until tomatoes soften.",
-          "Return prawns to the skillet, add cooked pasta, and toss to combine. Garnish with parsley and serve."
-        ],
-        photoURL: "https://example.com/spicy-garlic-prawn-pasta.jpg"
+  import { clientAPIInstance } from "$lib/stores/clientAPIStore";
+  import { onMount } from "svelte";
+
+  // Assume each recipe is stored as a tuple [key, recipeObject]
+  let activeRecipes: any[] = [];
+  let loadingMore = true;
+
+  // Track the current slide index (0-based)
+  let currentSlide = 0;
+
+  // This function loads and appends new recipes
+  async function getRecipes() {
+    if ($clientAPIInstance) {
+      try {
+        const recipes = JSON.parse(await $clientAPIInstance.getRecipeRecommendations());
+        // Convert the recipe object to an array of [key, recipe] pairs
+        const newRecipes = Object.keys(recipes).map(key => [key, recipes[key]]);
+        activeRecipes = [...activeRecipes, ...newRecipes];
+      } catch (e) {
+        // You may want to handle errors more gracefully
+        await getRecipes();
       }
-    };
-  
-    // Convert recipes to an array for easy iteration.
-    const recipesArray = Object.entries(currentRecipes);
-  </script>
-  
-  <!-- Carousel Container -->
-  <div class="carousel w-full h-[75vh]">
-    {#each recipesArray as [key, recipe], index}
-      <!-- Each slide has a unique id (e.g., slide1, slide2, ...) -->
-      <div id={"slide" + (index + 1)} class="carousel-item relative w-full">
-        <div class="card bg-base-100 shadow-xl mx-auto h-full w-3/4">
-          <figure>
-            <img src={recipe.photoURL} alt={recipe.name} class="object-cover h-48 w-full" />
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title text-2xl font-bold text-left">{recipe.name}</h2>
-            <p class="text-gray-500 text-left">{recipe.description}</p>
-  
-            <!-- Ingredients (using a DaisyUI collapse component) -->
-            <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
-              <input type="checkbox" />
-              <div class="collapse-title text-xl font-medium text-left">Ingredients</div>
-              <div class="collapse-content">
-                <ul class="list-disc list-inside">
-                  {#each recipe.ingredients as item}
-                    <li class="text-left">{item.amount} of {item.ingredient}</li>
-                  {/each}
-                </ul>
-              </div>
-            </div>
-  
-            <!-- Instructions (using another DaisyUI collapse component) -->
-            <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
-              <input type="checkbox" />
-              <div class="collapse-title text-xl font-medium text-left">Instructions</div>
-              <div class="collapse-content">
-                <ol class="list-decimal list-inside">
-                  {#each recipe.instructions as step}
-                    <li class="mb-1 text-left">{step}</li>
-                  {/each}
-                </ol>
-              </div>
-            </div>
-  
-            <div class="card-actions justify-end">
-              <button class="btn btn-primary">Add Recipe</button>
+    }
+    loadingMore = false;
+  }
+
+  // Called when the component is first mounted.
+  onMount(async () => {
+    await getRecipes();
+  });
+
+  // This function handles a click on the next button.
+  async function handleNextClick(index: number) {
+    // Do nothing if we're currently loading more recipes.
+    if (loadingMore) return;
+
+    // Advance to the next slide (this is your own way to keep track of the visible slide)
+    currentSlide = index + 1;
+
+    // If the new slide is the third slide of the current subset, disable the next button,
+    // load more recipes, then re-enable the button.
+    // (Since currentSlide is 0-based, the third slide in a group is when (currentSlide + 1) % 3 === 0.)
+    if ((currentSlide + 1) % 3 === 0) {
+      loadingMore = true;
+      // Here you might want to add additional UI feedback for disabling the button.
+      await getRecipes();
+      loadingMore = false;
+    }
+  }
+
+  async function onAddRecipe(recipe: any) {
+    if ($clientAPIInstance) {
+      await $clientAPIInstance.addToFoodSelection(recipe);
+    }
+  }
+</script>
+
+<!-- Carousel Container -->
+<div class="carousel w-full h-[75vh]">
+  {#each activeRecipes as [key, recipe], index}
+    <!-- Each slide has a unique id (e.g., slide1, slide2, ...) -->
+    <div id={"slide" + (index + 1)} class="carousel-item relative w-full">
+      <div class="card bg-base-100 shadow-xl mx-auto h-full w-3/4">
+        <figure>
+          <img src={recipe.photoURL} alt={recipe.name} class="object-cover h-48 w-full" />
+        </figure>
+        <div class="card-body">
+          <h2 class="card-title text-2xl font-bold text-left">{recipe.name}</h2>
+          <p class="text-gray-500 text-left">{recipe.description}</p>
+
+          <!-- Ingredients (using a DaisyUI collapse component) -->
+          <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium text-left">Ingredients</div>
+            <div class="collapse-content">
+              <ul class="list-disc list-inside">
+                {#each recipe.ingredients as item}
+                  <li class="text-left">{item.amount} of {item.ingredient}</li>
+                {/each}
+              </ul>
             </div>
           </div>
-        </div>
-  
-        <!-- Navigation Buttons -->
-        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-          <!-- Previous Button -->
-          <a
-            href={"#slide" + (index === 0 ? recipesArray.length : index)}
-            class="btn btn-circle"
-          >
-            ❮
-          </a>
-          <!-- Next Button -->
-          <a
-            href={"#slide" + (index + 2 > recipesArray.length ? 1 : index + 2)}
-            class="btn btn-circle"
-          >
-            ❯
-          </a>
+
+          <!-- Instructions (using another DaisyUI collapse component) -->
+          <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box my-4">
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium text-left">Instructions</div>
+            <div class="collapse-content">
+              <ol class="list-decimal list-inside">
+                {#each recipe.instructions as step}
+                  <li class="mb-1 text-left">{step}</li>
+                {/each}
+              </ol>
+            </div>
+          </div>
+
+          <div class="card-actions justify-end">
+            <button on:click={() => onAddRecipe(recipe)} class="btn btn-primary">Add Recipe</button>
+          </div>
         </div>
       </div>
-    {/each}
-  </div>
-  
+
+      <!-- Navigation Buttons -->
+      <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+        <!-- Previous Button -->
+        <a
+          href={"#slide" + (index === 0 ? activeRecipes.length : index)}
+          class="btn btn-circle"
+        >
+          {"❮"}
+        </a>
+        <!-- Next Button -->
+        <a
+          href={"#slide" + (index + 2 > activeRecipes.length ? 1 : index + 2)}
+          class="btn btn-circle"
+          on:click={() => handleNextClick(index)}
+          disabled={loadingMore && ((currentSlide + 1) % 3 === 0)}
+        >
+          {"❯"}
+        </a>
+      </div>
+    </div>
+  {/each}
+
+  {#if loadingMore}
+    <div class="fixed right-0 bottom-20 z-100 mx-auto w-full flex justify-center items-center">
+      <p class="text-sm me-3"><i>Loading recipe recommendations...</i></p>
+      <span class="loading loading-spinner loading-xs"></span>
+    </div>
+  {/if}
+</div>
