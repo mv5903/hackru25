@@ -26,7 +26,7 @@ exports.handler = async (event) => {
 
     await users.insertOne({
       user_auth_id: user_id,
-      intake_status: false,
+      intake_form: null,
     });
 
     console.log("User Added To DB");
