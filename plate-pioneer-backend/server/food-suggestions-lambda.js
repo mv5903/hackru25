@@ -4,14 +4,34 @@ const { MongoClient } = require("mongodb");
 const OPENAI_API_KEY =
   "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";
 
-exports.handler = async (event) => {
-  console.log("Event:", event);
+const DB_NAME = "PlatePioneer";
+
+// Initialize MongoDB client outside the handler to reuse it across requests
+let client;
+let db;
+
+const connectToMongoDB = async () => {
+  if (client) {
+    // Reuse the existing client if it's already connected
+    console.log("Reusing existing MongoDB connection");
+    return db;
+  }
+
   const username = encodeURIComponent("JeetG-22");
   const password = encodeURIComponent("Jeet12345!");
   const mongodb_uri = `mongodb+srv://${username}:${password}@platepioneer.ilmm5.mongodb.net/?retryWrites=true&w=majority&appName=PlatePioneer`;
 
-  const client = new MongoClient(mongodb_uri);
-  const DB_NAME = "PlatePioneer";
+  client = new MongoClient(mongodb_uri);
+  await client.connect();
+  db = client.db(DB_NAME);
+  console.log("Connected to MongoDB");
+
+  return db;
+};
+
+exports.handler = async (event) => {
+  console.log("Event:", event);
+
   try {
     const user_id = event.queryStringParameters.authID;
     console.log("User ID", user_id);
@@ -20,10 +40,7 @@ exports.handler = async (event) => {
       throw new Error("No User ID Found!");
     }
 
-    await client.connect();
-    console.log("Connected to MongoDB");
-
-    const database = client.db(DB_NAME);
+    const database = await connectToMongoDB();
     const users = database.collection("Users");
 
     // Check if auth_id exists in the collection
@@ -42,6 +59,7 @@ exports.handler = async (event) => {
       };
     }
     const intake_data = existingUser.intake_form;
+    const selected_meals = existingUser.selected_meals;
 
     //execute prompt for meal suggestions
     const openai = new OpenAI({
@@ -61,10 +79,22 @@ exports.handler = async (event) => {
       time_available: intake_data.timeToCook,
     };
 
-    const prompt = `
+    let prompt = `
       Based on the following user preferences, generate 3 possible meal ideas that meet their requirements. 
       Each meal should have a name, instructions, key ingredients, and a simple picture. Ensure the meals follow these constraints:
-      ${JSON.stringify(userInput, null, 2)}
+      ${JSON.stringify(userInput, null, 2)}`;
+
+    //add additional prompt
+    selected_meals_names = [];
+    if (selected_meals && selected_meals.length > 0) {
+      for (meal of selected_meals) {
+        selected_meals_names.push(meal.name);
+      }
+      prompt += `
+        The user has previously selected the following meals. Please use this information to provide more tailored and refined suggestions that match their preferences:
+        ${JSON.stringify(selected_meals_names, null, 2)}\n`;
+    }
+    prompt += `
       Return the output in the following key-value format (json), with these keys:
 
       meal #{
@@ -93,7 +123,7 @@ exports.handler = async (event) => {
       body: JSON.stringify(response.choices[0].message.content),
     };
   } catch (error) {
-    console.log(error);
+    console.error("Error generating meal suggestions:", error);
     return {
       statusCode: 400,
       headers: {
