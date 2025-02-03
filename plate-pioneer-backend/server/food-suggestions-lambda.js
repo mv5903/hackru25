@@ -84,12 +84,9 @@ exports.handler = async (event) => {
       Each meal should have a name, instructions, key ingredients, and a simple picture. Ensure the meals follow these constraints:
       ${JSON.stringify(userInput, null, 2)}`;
 
-    //add additional prompt
-    selected_meals_names = [];
-    if (selected_meals && selected_meals.length > 0) {
-      for (meal of selected_meals) {
-        selected_meals_names.push(meal.name);
-      }
+    // Add additional prompt for selected meals if they exist
+    if (Array.isArray(selected_meals) && selected_meals.length > 0) {
+      let selected_meals_names = selected_meals.map((meal) => meal.name);
       prompt += `
         The user has previously selected the following meals. Please use this information to provide more tailored and refined suggestions that match their preferences:
         ${JSON.stringify(selected_meals_names, null, 2)}\n`;

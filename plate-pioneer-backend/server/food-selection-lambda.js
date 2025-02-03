@@ -5,8 +5,6 @@ exports.handler = async (event) => {
   const username = encodeURIComponent("JeetG-22");
   const password = encodeURIComponent("Jeet12345!");
   const mongodb_uri = `mongodb+srv://${username}:${password}@platepioneer.ilmm5.mongodb.net/?retryWrites=true&w=majority&appName=PlatePioneer`;
-  const bodyObject = JSON.parse(event.body || "{}");
-  console.log("Parsed body:", bodyObject);
 
   const client = new MongoClient(mongodb_uri);
   const DB_NAME = "PlatePioneer";
@@ -24,8 +22,10 @@ exports.handler = async (event) => {
     if (httpMethod === "GET") {
       user_id = event.queryStringParameters.authID;
     } else {
+      const bodyObject = JSON.parse(event.body || "{}");
+      console.log("Parsed body:", bodyObject);
       user_id = bodyObject.authID;
-      intake_form = bodyObject.intake_form;
+      selected_meal = bodyObject.selected_meal;
     }
     console.log("User ID", user_id);
     console.log("Selected Meal", selected_meal);
